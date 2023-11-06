@@ -21,21 +21,6 @@ ALLOWED_OPERATIONS = [
 ALLOWED_TABLE_NAMES = ["ClientRules", "ClientConfig", "SessionTokens"]
 
 
-# setup mandatory entity keys for each table, all in lower case
-MANDATORY_ENTITY_KEYS = {
-    "ClientRules": ["partitionkey", "rowkey", "rules"],
-    "ClientConfig": [
-        "partitionkey",
-        "rowkey",
-        "name",
-        "run_frequency_hours",
-        "group_upload",
-        "pdf",
-    ],
-    "SessionTokens": ["rowkey"],
-}
-
-
 def logger(
     logging_format: str = "%(levelname)s, %(name)s.%(funcName)s: %(message)s",
     level: int = logging.INFO,

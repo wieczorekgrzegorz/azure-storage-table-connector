@@ -57,33 +57,15 @@ def validate_requests_keys_are_allowed(key_name: str, key: str, allowed_values: 
         )
 
 
-def validate_mandatory_entity_keys(mandatory_entity_keys: dict[str, list], entity: dict, table_name: str) -> None:
-    """Validates if mandatory keys are present in entity. Raises TableOperationsError if any key is missing."""
-
-    # lower case all keys before validation
-    entity_keys = [key.lower() for key in entity.keys()]
-    for key in mandatory_entity_keys[table_name]:
-        if key not in entity_keys:
-            raise custom_error.TableOperationsError(
-                summary="RequestError",
-                message=f"Entity does not contain mandatory key: {key}. Please check your request body.",
-            )
-
-
 def validate_partition_and_row_keys_are_strings(entity: dict) -> None:
     """Validates datatypes of entity's values. Raises TableOperationsError if any value is not a string."""
 
-    for key in ["PartitionKey", "RowKey"]:
-        try:
-            if not isinstance(entity[key], str):
-                raise custom_error.TableOperationsError(
-                    summary="RequestError",
-                    message=f"Value of {key} ({type(entity[key])}) is not a string. Please check your request body.",
-                )
-        except KeyError:
-            # Check for mandatory keys was done one step earlier.
-            # Therefore if "PartitionKey" or "RowKey" is missing, it is legal.
-            continue
+    for key in entity.keys():
+        if key in ["PartitionKey", "RowKey"] and not isinstance(entity[key], str):
+            raise custom_error.TableOperationsError(
+                summary="RequestError",
+                message=f"Value of {key} ({type(entity[key])}) is not a string. Please check your request body.",
+            )
 
 
 def convert_nulls_to_empty_string(entity: dict) -> dict:
@@ -111,7 +93,6 @@ def main(
     req: func.HttpRequest,
     allowed_table_names: list[str],
     allowed_operations: list[str],
-    mandatory_entity_keys: dict[str, list],
 ) -> tuple[dict, str, str]:
     """
     Validates HTTP request body.
@@ -120,8 +101,6 @@ def main(
         req (func.HttpRequest): HTTP request
         allowed_table_names (list[str]): List of allowed names of azure tables. Environment constant.
         allowed_operations (list[str]): List of allowed operations. Environment constant.
-        mandatory_entity_keys (dict[str, list]): Dictionary with mandatory entity keys for each table.
-            Environment constant.
 
     Returns:
         tuple[dict, str, str]: entity details, table_name, operation
@@ -136,12 +115,6 @@ def main(
     validate_requests_keys_are_allowed(key_name="Table name", key=table_name, allowed_values=allowed_table_names)
 
     validate_requests_keys_are_allowed(key_name="Operation", key=operation, allowed_values=allowed_operations)
-
-    validate_mandatory_entity_keys(
-        mandatory_entity_keys=mandatory_entity_keys,
-        entity=entity,
-        table_name=table_name,
-    )
 
     validate_partition_and_row_keys_are_strings(entity=entity)
 

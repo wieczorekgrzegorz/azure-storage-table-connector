@@ -84,5 +84,4 @@ def storage_account_connector_api(
         connection_string=config.STORAGE_TABLE_CONNECTION_STRING,
         allowed_table_names=config.ALLOWED_TABLE_NAMES,
         allowed_operations=config.ALLOWED_OPERATIONS,
-        mandatory_entity_keys=config.MANDATORY_ENTITY_KEYS,
     )

@@ -95,7 +95,6 @@ def main(
     connection_string: str,
     allowed_table_names: list[str],
     allowed_operations: list[str],
-    mandatory_entity_keys: dict[str, list],
 ) -> func.HttpResponse:
     """
     #TODO Work in Progress.
@@ -113,7 +112,6 @@ def main(
             req=req,
             allowed_table_names=allowed_table_names,
             allowed_operations=allowed_operations,
-            mandatory_entity_keys=mandatory_entity_keys,
         )
 
         table_client = create_table_client(
