@@ -17,9 +17,7 @@ def create_table_service(connection_string: str) -> TableServiceClient:
     return TableServiceClient.from_connection_string(conn_str=connection_string)
 
 
-def create_table_client(
-    table_service_client: TableServiceClient, table_name: str
-) -> TableClient:
+def create_table_client(table_service_client: TableServiceClient, table_name: str) -> TableClient:
     """Get a client to interact with the specified table."""
     return table_service_client.get_table_client(table_name=table_name)
 
@@ -69,9 +67,7 @@ def query_table(
     """
 
     log.debug(msg=f"Querying table with operation: {operation}.")
-    query_result = getattr(entity_operations, operation)(
-        table_client=table_client, entity=entity
-    )
+    query_result = getattr(entity_operations, operation)(table_client=table_client, entity=entity)
     log.debug(msg=f"Query returned {type(query_result)}: {query_result}.")
 
     return query_result
@@ -121,9 +117,7 @@ def main(
         )
 
         table_client = create_table_client(
-            table_service_client=create_table_service(
-                connection_string=connection_string
-            ),
+            table_service_client=create_table_service(connection_string=connection_string),
             table_name=table_name,
         )
 
@@ -133,9 +127,7 @@ def main(
             entity=entity,
         )
 
-        query_result = convert_tables_entity_datetime_to_string(
-            query_result=query_result
-        )
+        query_result = convert_tables_entity_datetime_to_string(query_result=query_result)
 
         return_body_dict["query_result"] = query_result
 

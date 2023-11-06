@@ -18,8 +18,8 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 ###########################
 
 
-@app.function_name(name="storage_account_connector")
-@app.route(route="storage_account_connector", methods=["POST"])
+@app.function_name(name="azure_storage_table_connector")
+@app.route(route="azure_storage_table_connector", methods=["POST"])
 def storage_account_connector_api(
     req: func.HttpRequest,
 ) -> func.HttpResponse:
