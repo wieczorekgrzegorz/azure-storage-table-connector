@@ -47,18 +47,30 @@ def parse_req_body(req_body: dict) -> tuple[dict, str, str]:
     return entity, table_name, operation
 
 
-def validate_requests_keys_are_allowed(key_name: str, key: str, allowed_values: list[str]) -> None:
-    """Validates table name. Raises TableOperationsError if table name is not correct."""
+def validate_requests_keys_are_allowed(
+    operation: str,
+    table_name: str,
+    allowed_operations: list[str],
+    allowed_table_names: list[str],
+) -> None:
+    """Validates request body keys. Raises TableOperationsError if any key is not allowed."""
 
-    if key not in allowed_values:
+    if operation not in allowed_operations:
         raise custom_error.TableOperationsError(
             summary="RequestError",
-            message=f"{key_name} is not correct. Please choose one from '{allowed_values}'.",
+            message=f"Operation is not correct. Please choose one from '{allowed_operations}'.",
+        )
+
+    if table_name not in allowed_table_names:
+        raise custom_error.TableOperationsError(
+            summary="RequestError",
+            message=f"Table name is not correct. Please choose one from '{allowed_table_names}'.",
         )
 
 
 def validate_partition_and_row_keys_are_strings(entity: dict) -> None:
-    """Validates datatypes of entity's values. Raises TableOperationsError if any value is not a string."""
+    """Confirms that if either PartitionKey or RowKey is present in entity dict, they are of string type.
+    Raises TableOperationsError if any value is not a string."""
 
     for key in entity.keys():
         if key in ["PartitionKey", "RowKey"] and not isinstance(entity[key], str):
@@ -77,7 +89,7 @@ def convert_nulls_to_empty_string(entity: dict) -> dict:
 
 
 def convert_datetime(date_string: str) -> datetime.datetime:
-    """Convert datetime string to datetime ISO-formated object."""
+    """Convert datetime string to datetime ISO-formated object. Used for requests to update ClientRules table."""
     try:
         iso_formated_date = datetime.datetime.strptime(date_string, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
     except (ValueError, TypeError) as e:
@@ -112,17 +124,19 @@ def main(
 
     entity, table_name, operation = parse_req_body(req_body=req_body)
 
-    validate_requests_keys_are_allowed(key_name="Table name", key=table_name, allowed_values=allowed_table_names)
-
-    validate_requests_keys_are_allowed(key_name="Operation", key=operation, allowed_values=allowed_operations)
+    validate_requests_keys_are_allowed(
+        operation=operation,
+        table_name=table_name,
+        allowed_operations=allowed_operations,
+        allowed_table_names=allowed_table_names,
+    )
 
     validate_partition_and_row_keys_are_strings(entity=entity)
 
     entity = convert_nulls_to_empty_string(entity=entity)
 
-    if "date_from" in entity:
+    if table_name == "ClientRules":
         entity["date_from"] = convert_datetime(date_string=entity["date_from"])
-    if "date_to" in entity:
         entity["date_to"] = convert_datetime(date_string=entity["date_to"])
 
     return entity, table_name, operation

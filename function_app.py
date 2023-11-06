@@ -3,8 +3,7 @@ import logging
 
 import azure.functions as func
 
-from modules import main
-from utilities import config
+from modules import config, main
 
 
 log: logging.Logger = logging.getLogger(name="log." + __name__)
