@@ -1,13 +1,17 @@
-"""Unit tests for config.py"""
+"""Unit tests for modules.main"""
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 
 import azure.functions
 
 
-import context
-from modules import custom_error, get_req_body
+import context  # pylint: disable=E0401:import-error
+from modules import main, custom_error
 
 
 class TestFunction(context.BaseTestCase):
     """Tests for <function_name> function."""
+
+
+if __name__ == "__main__":
+    unittest.main()

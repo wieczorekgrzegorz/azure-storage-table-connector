@@ -105,7 +105,7 @@ def main(
     Parameters:
         req_body (dict): HTTP request body
         connection_string (str): connection string to azure storage account
-        allowed_table_names (list[str]): list of allowed table names. If table name from request body is not in this list,
+        allowed_table_names (list[str]): list of allowed table names. If table name is not in this list,
             TableOperationsError is raised. If empty list is provided, all table names are allowed. Config.py constant.
         allowed_operations (list[str]): list of allowed operations. If operation from request body is not in this list,
             TableOperationsError is raised. If empty list is provided, all operations are allowed. Config.py constant.

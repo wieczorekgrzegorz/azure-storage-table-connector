@@ -1,4 +1,4 @@
-"""Unit tests for config.py"""
+"""Unit tests for modules.config"""
 import logging
 import unittest
 

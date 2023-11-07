@@ -1,4 +1,4 @@
-"""Unit tests for get_req_body_tests.py"""
+"""Unit tests for modules.get_req_body_tests"""
 import datetime
 import unittest
 from unittest.mock import Mock, patch, MagicMock

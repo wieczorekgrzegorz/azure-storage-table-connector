@@ -50,8 +50,7 @@ def get(table_client: TableClient, entity: dict) -> dict:
         # this shouldn't be possible, as PartitionKey and RowKey are unique keys
         raise custom_error.TableOperationsError(
             summary="MoreThanOneEntityFound",
-            message=f"More than one entity found for PartitionKey '{entity['PartitionKey']}'/\
-                and RowKey '{entity['RowKey']}",
+            message=f"More than one entity found for '{entity['PartitionKey']}' / '{entity['RowKey']}",
         )
 
     return entities_list[0]
@@ -104,7 +103,13 @@ def delete(table_client: TableClient, entity: dict) -> dict:
             querying for the entity after delete operation.
     """
 
-    table_client.delete_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
+    try:
+        table_client.delete_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
+    except (
+        azure_exceptions.ResourceNotFoundError,
+        azure_exceptions.HttpResponseError,
+    ) as e:
+        raise custom_error.TableOperationsError(summary="AzureError", message=e.message) from e
 
     try:
         table_client.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])

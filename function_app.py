@@ -78,6 +78,12 @@ def storage_account_connector_api(
     """
     log.info(msg="StorageAccountConnector starting.")
 
+    print("\n\nMethod: ", req.method)
+    print("URL: ", req.url)
+    print("Headers: ", dict(req.headers))
+    print("Params: ", dict(req.params))
+    print("Route Params: ", req.route_params, end="\n\n")
+
     return main.main(
         req=req,
         connection_string=config.STORAGE_TABLE_CONNECTION_STRING,
