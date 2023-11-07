@@ -8,7 +8,7 @@ from azure.data.tables import TableClient, UpdateMode
 
 from . import custom_error
 
-log = logging.getLogger(name="log.storage_account_connector." + __name__)
+log = logging.getLogger(name="log." + __name__)
 
 # more: https://learn.microsoft.com/en-us/python/api/overview/azure/data-tables-readme?view=azure-python
 

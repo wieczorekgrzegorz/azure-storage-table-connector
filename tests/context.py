@@ -47,6 +47,8 @@ class BaseTestCase(unittest.TestCase):
 
     def setUp(self) -> None:
         self.mock_log = patch("modules.get_req_body.log").start()
+        self.mock_log = patch("modules.main.log").start()
+        self.mock_log = patch("modules.entity_operations.log").start()
         self.mock_error_log = patch("modules.custom_error.log").start()
 
     def tearDown(self) -> None:

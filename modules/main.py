@@ -154,6 +154,10 @@ def main(
         return_body_dict["query_result"] = None
         exc_type, exc_value, exc_tb = sys.exc_info()
         exc_value = str(object=exc_value).replace("'", "")
-        return_body_dict["error"] = {"Type": exc.__class__.__name__, "Value": exc_value}
+        return_body_dict["error"] = {"error": exc.__class__.__name__, "message": exc_value}
         log.error(msg=f"Unexpected error. {exc_type}: {exc_value}; traceback: {exc_tb}")
         return build_http_response(response_dict=return_body_dict)
+
+
+if __name__ == "__main__":
+    pass
