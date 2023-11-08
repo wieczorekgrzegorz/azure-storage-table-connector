@@ -1,16 +1,12 @@
 """Unit tests for modules.config"""
-import logging
 import unittest
 
-import context  # pylint: disable=E0401:import-error
+import context  # pylint: disable=F0401:import-error
 from modules import config
-
-log = logging.getLogger(name="log." + __name__)
-logging.basicConfig(level=logging.DEBUG, format="\n%(message)s")
 
 
 class TestFunctionConstants(context.BaseTestCase):
-    """Tests for {FUNCTION_NAME} function."""
+    """Tests for constants declaration."""
 
     def test_allowed_table_names(self) -> None:
         """Tests if allowed_table_names is a list."""

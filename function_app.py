@@ -7,7 +7,7 @@ from modules import config, main
 
 
 log: logging.Logger = logging.getLogger(name="log." + __name__)
-config.logger(level=logging.DEBUG)
+config.setup_custom_logger(level=logging.DEBUG)
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
@@ -77,12 +77,6 @@ def storage_account_connector_api(
         'penultimate_successfull_download_run': str(datetime),
     """
     log.info(msg="StorageAccountConnector starting.")
-
-    print("\n\nMethod: ", req.method)
-    print("URL: ", req.url)
-    print("Headers: ", dict(req.headers))
-    print("Params: ", dict(req.params))
-    print("Route Params: ", req.route_params, end="\n\n")
 
     return main.main(
         req=req,

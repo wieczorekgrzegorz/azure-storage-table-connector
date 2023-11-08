@@ -21,7 +21,7 @@ ALLOWED_OPERATIONS = [
 ALLOWED_TABLE_NAMES = ["ClientRules", "ClientConfig", "SessionTokens"]
 
 
-def logger(
+def setup_custom_logger(
     logging_format: str = "%(levelname)s, %(name)s.%(funcName)s: %(message)s",
     level: int = logging.INFO,
 ) -> None:
@@ -35,8 +35,6 @@ def logger(
     Returns:
         None
     """
-    log.debug(msg="Setting up custom logger.")
-
     log.setLevel(level=level)
 
     handler = logging.StreamHandler(stream=None)

@@ -9,14 +9,16 @@ class TableOperationsError(Exception):
 
     message: str
     summary: str
-    repr: str
+    string: str
 
     def __init__(self, summary: str, message: str) -> None:
         self.summary = summary
         self.message = message
-        self.repr = f"{self.summary}: {self.message}"
-        super().__init__(self.message)
-        log.exception(msg=self.repr, stacklevel=2)
+        self.string = f"{self.summary}: {self.message}"
+        log.error(msg=self.string, stacklevel=2)
 
     def __repr__(self) -> str:
-        return self.repr
+        return f"TableOperationsError(summary={self.summary}, message={self.message})"
+
+    def __str__(self) -> str:
+        return self.string

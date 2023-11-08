@@ -1,4 +1,4 @@
-"""Unit tests for modules.main"""
+"""Unit tests for modules.main.py module"""
 import unittest
 from unittest.mock import Mock, patch, MagicMock
 
