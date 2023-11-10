@@ -133,5 +133,4 @@ def main(  # pylint: disable=too-many-arguments, R0914:too-many-locals
         exc_value = str(object=exc_value).replace("'", "")
         return_body_dict["error"] = {"error": exc.__class__.__name__, "message": exc_value}
         log.error(msg=f"Unexpected error. {exc_type}: {exc_value}; traceback: {exc_tb}")
-        print(f"\n     return_body_dict: {return_body_dict} (type: {type(return_body_dict)})")
         return build_http_response(response_dict=return_body_dict)
