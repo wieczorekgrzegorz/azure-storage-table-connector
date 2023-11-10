@@ -6,7 +6,7 @@ import azure.core.exceptions as azure_exceptions
 
 from azure.data.tables import TableClient, UpdateMode
 
-from . import custom_error
+from .utilities import custom_error
 
 log = logging.getLogger(name="log.storage_account_connector." + __name__)
 
@@ -62,7 +62,7 @@ def get_all(table_client: TableClient, entity: dict) -> list[dict]:
 
     Parameters:
         table_client (TableClient): TableClient object
-        entity (dict): dictionary with entity's PartitionKey and RowKey
+        entity (dict): dictionary with entity's PartitionKey and/or RowKey
 
     Returns:
         list[dict] | None: list of entities if found, None otherwise
@@ -71,11 +71,22 @@ def get_all(table_client: TableClient, entity: dict) -> list[dict]:
         custom_error.TableOperationsError: if error occurs while listing entities from azure Table\
             or if no entities are found
     """
-    # TODO [KK-188] add feature to get all by PartitionKey only
 
     entities_list = []
     try:
-        queried_entities = table_client.query_entities(query_filter=f"RowKey eq '{entity['RowKey']}'")
+        if ("RowKey" in entity.keys()) and ("PartitionKey" in entity.keys()):
+            query_filter = f"PartitionKey eq '{entity['PartitionKey']}' and RowKey eq '{entity['RowKey']}'"
+        elif "RowKey" in entity.keys():
+            query_filter = f"RowKey eq '{entity['RowKey']}'"
+        elif "PartitionKey" in entity.keys():
+            query_filter = f"PartitionKey eq '{entity['PartitionKey']}'"
+        else:
+            raise custom_error.TableOperationsError(
+                summary="RequiredKeyMissing",
+                message=f"Both 'PartitionKey' and 'RowKey' are missing from entity: {entity}. Provide at least one.",
+            )
+
+        queried_entities = table_client.query_entities(query_filter=query_filter)
         for element in queried_entities:
             entities_list.append(element)
     except (
