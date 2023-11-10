@@ -1,4 +1,4 @@
-"""Unit tests for get_req_body_tests.py"""
+"""Unit tests for modules.get_req_body_tests.py"""
 import datetime
 import unittest
 from unittest.mock import Mock, patch, MagicMock
@@ -6,9 +6,9 @@ from unittest.mock import Mock, patch, MagicMock
 import azure.functions
 
 
-import context  # pylint: disable=E0401:import-error
 from modules import get_req_body
 from modules.utilities import custom_error
+from . import context
 
 
 class TestReqToJson(context.BaseTestCase):

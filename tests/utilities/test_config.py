@@ -1,9 +1,9 @@
-"""Unit tests for config.py"""
+"""Unit tests for modules.utilities.config.py"""
 import logging
 import unittest
 
-import context  # pylint: disable=E0401:import-error
 from modules.utilities import config
+from . import context
 
 log = logging.getLogger(name="log." + __name__)
 logging.basicConfig(level=logging.DEBUG, format="\n%(message)s")
@@ -26,7 +26,7 @@ class TestFunctionConstants(context.BaseTestCase):
 
     def test_datetime_fields(self) -> None:
         """Tests if storage_table_connection_string is a string."""
-        self.assertIsInstance(obj=config.DATETIME_FIELDS, cls=str)
+        self.assertIsInstance(obj=config.DATETIME_FIELDS, cls=list)
 
 
 if __name__ == "__main__":

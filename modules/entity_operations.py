@@ -82,7 +82,7 @@ def get_all(table_client: TableClient, entity: dict) -> list[dict]:
             query_filter = f"PartitionKey eq '{entity['PartitionKey']}'"
         else:
             raise custom_error.TableOperationsError(
-                summary="RequiredKeyMissing",
+                summary="RequestError",
                 message=f"Both 'PartitionKey' and 'RowKey' are missing from entity: {entity}. Provide at least one.",
             )
 
@@ -116,13 +116,18 @@ def delete(table_client: TableClient, entity: dict) -> dict:
         custom_error.TableOperationsError: if entity was not removed from azure Table, as checked by\
             querying for the entity after delete operation.
     """
-
-    table_client.delete_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
-
     try:
-        table_client.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
-    except azure_exceptions.ResourceNotFoundError:
-        return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' removed from table."}
+        table_client.delete_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
+
+        try:
+            table_client.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
+        except azure_exceptions.ResourceNotFoundError:
+            return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' removed from table."}
+    except (
+        azure_exceptions.ResourceNotFoundError,
+        azure_exceptions.HttpResponseError,
+    ) as e:
+        raise custom_error.TableOperationsError(summary="AzureError", message=e.message) from e
 
     raise custom_error.TableOperationsError(
         summary="AzureError",

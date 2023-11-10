@@ -13,33 +13,6 @@ from .utilities import custom_error
 log = logging.getLogger(name="log." + __name__)
 
 
-def create_table_service(connection_string: str) -> TableServiceClient:
-    """Create TableServiceClient from a connection string."""
-    return TableServiceClient.from_connection_string(conn_str=connection_string)
-
-
-def create_table_client(table_service_client: TableServiceClient, table_name: str) -> TableClient:
-    """Get a client to interact with the specified table."""
-    return table_service_client.get_table_client(table_name=table_name)
-
-
-def build_error_dict(
-    e: custom_error.TableOperationsError,
-) -> dict[str, str]:
-    """Build error dictionary.
-
-    Parameters:
-        e (custom_error.TableOperationsError): TableOperationsError object
-
-    Returns:
-        dict[str, str]: dictionary with error name and message
-    """
-    return {
-        "error": e.summary,
-        "message": e.message,
-    }
-
-
 def build_http_response(response_dict: dict) -> func.HttpResponse:
     """Creates HTTP response from response dictionary.
     Raises TableOperationsError if response dictionary is not JSON-serializable."""
@@ -118,10 +91,9 @@ def main(  # pylint: disable=too-many-arguments, R0914:too-many-locals
             datetime_fields=datetime_fields,
         )
 
-        table_client = create_table_client(
-            table_service_client=create_table_service(connection_string=connection_string),
-            table_name=table_name,
-        )
+        table_service_client = TableServiceClient.from_connection_string(conn_str=connection_string)
+
+        table_client = table_service_client.get_table_client(table_name=table_name)
 
         query_result = query_table(
             operation=operation,
@@ -137,7 +109,10 @@ def main(  # pylint: disable=too-many-arguments, R0914:too-many-locals
 
     except custom_error.TableOperationsError as e:
         return_body_dict["query_result"] = None
-        return_body_dict["error"] = build_error_dict(e=e)
+        return_body_dict["error"] = {
+            "error": e.summary,
+            "message": e.message,
+        }
         log.error(msg=f"TableOperationsError. {e.summary}: {e.message}")
         return build_http_response(response_dict=return_body_dict)
 
