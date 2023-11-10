@@ -73,11 +73,24 @@ def main(  # pylint: disable=too-many-arguments, R0914:too-many-locals
     datetime_fields: list[str],
 ) -> func.HttpResponse:
     """
-    #TODO Work in Progress.
+    Main function for connecting to Azure Storage Account. Gets Table Name, Table Operation and Entity to work on
+    from HTTP request body. Connects to Azure Storage Account and queries the specified table with specified operation.
+    Provides HTTP response with query result or detailed error description in case of failure.
+
 
     Parameters:
         req_body (dict): HTTP request body
         connection_string (str): connection string to azure storage account
+        allowed_table_names (list[str]): list of allowed table names. If table name from request body is not in this list,
+            TableOperationsError is raised. If empty list is provided, all table names are allowed. Config.py constant.
+        allowed_operations (list[str]): list of allowed operations. If operation from request body is not in this list,
+            TableOperationsError is raised. If empty list is provided, all operations are allowed. Config.py constant.
+
+    Returns:
+        func.HttpResponse: HTTP response with query result or detailed error description in case of failure.
+
+    Raises:
+        None (if everything goes well): all error cases should be handled into HTTP response body.
     """
     return_body_dict: dict = {
         "query_result": None,
