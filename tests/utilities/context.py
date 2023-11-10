@@ -12,11 +12,12 @@ from unittest.mock import patch
 
 
 # adding main app folder to PATH
-FUNCTION_APP_PATH = str(PurePath(__file__).parents[1])
+FUNCTION_APP_PATH = str(PurePath(__file__).parents[2])
 sys.path.insert(0, FUNCTION_APP_PATH)
 
 # mock global variables for tests
 os.environ["STORAGE_TABLE_CONNECTION_STRING"] = "mock_connection_string"
+os.environ["DATETIME_FIELDS"] = "mock_datetime_fields"
 
 
 class BaseTestCase(unittest.TestCase):

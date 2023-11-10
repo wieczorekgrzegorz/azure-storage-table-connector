@@ -71,6 +71,8 @@ def get_all(table_client: TableClient, entity: dict) -> list[dict]:
         custom_error.TableOperationsError: if error occurs while listing entities from azure Table\
             or if no entities are found
     """
+    # TODO [KK-188] add feature to get all by PartitionKey only
+
     entities_list = []
     try:
         queried_entities = table_client.query_entities(query_filter=f"RowKey eq '{entity['RowKey']}'")

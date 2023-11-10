@@ -6,6 +6,7 @@ import os
 log = logging.getLogger(name="log")
 
 # declare environment constants
+
 STORAGE_TABLE_CONNECTION_STRING: str = os.environ["STORAGE_TABLE_CONNECTION_STRING"]
 
 
@@ -19,6 +20,13 @@ ALLOWED_OPERATIONS = [
     "upsert",
 ]
 ALLOWED_TABLE_NAMES = ["ClientRules", "ClientConfig", "SessionTokens"]
+DATETIME_FIELDS = [
+    "date_from",
+    "date_to",
+    "last_successfull_download_run",
+    "penultimate_successfull_download_run",
+    "SessionExpiration",
+]
 
 
 def logger(

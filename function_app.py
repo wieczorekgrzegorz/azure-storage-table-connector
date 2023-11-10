@@ -3,11 +3,12 @@ import logging
 
 import azure.functions as func
 
-from modules import config, main
+from modules import main
+from modules.utilities import config
 
 
 log: logging.Logger = logging.getLogger(name="log." + __name__)
-config.logger(level=logging.DEBUG)
+config.logger(level=logging.DEBUG)  # TODO [KK-187] move logging level to env. variable
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
@@ -83,4 +84,5 @@ def storage_account_connector_api(
         connection_string=config.STORAGE_TABLE_CONNECTION_STRING,
         allowed_table_names=config.ALLOWED_TABLE_NAMES,
         allowed_operations=config.ALLOWED_OPERATIONS,
+        datetime_fields=config.DATETIME_FIELDS,
     )

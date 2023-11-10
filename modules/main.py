@@ -7,7 +7,8 @@ import sys
 from azure import functions as func
 from azure.data.tables import TableServiceClient, TableClient, _deserialize
 
-from . import custom_error, entity_operations, get_req_body
+from . import entity_operations, get_req_body
+from .utilities import custom_error
 
 log = logging.getLogger(name="log." + __name__)
 
@@ -68,6 +69,7 @@ def query_table(
 
     log.debug(msg=f"Querying table with operation: {operation}.")
     query_result = getattr(entity_operations, operation)(table_client=table_client, entity=entity)
+    # //BUG: [KK-186] query_result is a list of dicts, but it's not JSON-serializable
     log.debug(msg=f"Query returned {type(query_result)}: {query_result}.")
 
     return query_result
@@ -90,11 +92,12 @@ def convert_tables_entity_datetime_to_string(
     return query_result
 
 
-def main(
+def main(  # pylint: disable=too-many-arguments, R0914:too-many-locals
     req: func.HttpRequest,
     connection_string: str,
     allowed_table_names: list[str],
     allowed_operations: list[str],
+    datetime_fields: list[str],
 ) -> func.HttpResponse:
     """
     #TODO Work in Progress.
@@ -112,6 +115,7 @@ def main(
             req=req,
             allowed_table_names=allowed_table_names,
             allowed_operations=allowed_operations,
+            datetime_fields=datetime_fields,
         )
 
         table_client = create_table_client(

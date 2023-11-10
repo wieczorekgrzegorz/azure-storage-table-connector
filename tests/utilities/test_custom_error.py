@@ -6,8 +6,11 @@ import azure.functions
 
 
 import context
-from modules import custom_error, get_req_body
+from modules.utilities import custom_error, get_req_body
 
 
 class TestFunction(context.BaseTestCase):
     """Tests for <function_name> function."""
+
+
+# TODO [KK-189] Storage Table Connector: add tests for custom_error.py

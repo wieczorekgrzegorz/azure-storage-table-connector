@@ -11,3 +11,6 @@ from modules import custom_error, get_req_body
 
 class TestFunction(context.BaseTestCase):
     """Tests for <function_name> function."""
+
+
+# TODO [KK-190]  Storage Table Connector: add tests for enitity_operations.py

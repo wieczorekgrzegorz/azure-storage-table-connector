@@ -4,7 +4,7 @@ import logging
 
 from azure import functions as func
 
-from . import custom_error
+from .utilities import custom_error
 
 log = logging.getLogger(name="log." + __name__)
 
@@ -88,23 +88,26 @@ def convert_nulls_to_empty_string(entity: dict) -> dict:
     return entity
 
 
-def convert_datetime(date_string: str) -> datetime.datetime:
+def convert_datetime_fields(entity: dict, datetime_fields: list[str]) -> dict:
     """Convert datetime string to datetime ISO-formated object. Used for requests to update ClientRules table."""
-    try:
-        iso_formated_date = datetime.datetime.strptime(date_string, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
-    except (ValueError, TypeError) as e:
-        raise custom_error.TableOperationsError(
-            summary="RequestError",
-            message=f"Error while parsing {date_string} date. Please provide date in format 'YYYY-MM-DD'.",
-        ) from e
+    for key, value in entity.items():
+        if key in datetime_fields:
+            try:
+                entity[key] = datetime.datetime.strptime(value, "%Y-%m-%d").replace(tzinfo=datetime.timezone.utc)
+            except (ValueError, TypeError) as e:
+                raise custom_error.TableOperationsError(
+                    summary="RequestError",
+                    message=f"Error while parsing {key} date ({value}). Please provide date in format 'YYYY-MM-DD'.",
+                ) from e
 
-    return iso_formated_date
+    return entity
 
 
 def main(
     req: func.HttpRequest,
     allowed_table_names: list[str],
     allowed_operations: list[str],
+    datetime_fields: list[str],
 ) -> tuple[dict, str, str]:
     """
     Validates HTTP request body.
@@ -113,6 +116,7 @@ def main(
         req (func.HttpRequest): HTTP request
         allowed_table_names (list[str]): List of allowed names of azure tables. Environment constant.
         allowed_operations (list[str]): List of allowed operations. Environment constant.
+        datetime_fields (list[str]): List of datetime fields across azure tables. Environment constant.
 
     Returns:
         tuple[dict, str, str]: entity details, table_name, operation
@@ -135,8 +139,6 @@ def main(
 
     entity = convert_nulls_to_empty_string(entity=entity)
 
-    if table_name == "ClientRules":
-        entity["date_from"] = convert_datetime(date_string=entity["date_from"])
-        entity["date_to"] = convert_datetime(date_string=entity["date_to"])
+    entity = convert_datetime_fields(entity=entity, datetime_fields=datetime_fields)
 
     return entity, table_name, operation
