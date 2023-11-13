@@ -225,7 +225,7 @@ def reset(table_client: TableClient, entity: dict, update_mode: UpdateMode = Upd
     )
     entity["SessionReferenceNumber"] = ""
     try:
-        table_client.update_entity(mode=update_mode, entity=entity)
+        table_client.upsert_entity(mode=update_mode, entity=entity)
     except (
         azure_exceptions.ResourceNotFoundError,
         azure_exceptions.HttpResponseError,
