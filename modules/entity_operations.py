@@ -122,7 +122,7 @@ def delete(table_client: TableClient, entity: dict) -> dict:
         try:
             table_client.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
         except azure_exceptions.ResourceNotFoundError:
-            return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' removed from table."}
+            return {"response": f"Entity {entity['PartitionKey']} {entity['RowKey']} removed from table."}
     except (
         azure_exceptions.ResourceNotFoundError,
         azure_exceptions.HttpResponseError,
@@ -190,7 +190,7 @@ def update(table_client: TableClient, entity: dict, update_mode: UpdateMode = Up
 
     validate_result(table_client=table_client, entity=entity)
 
-    return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' updated."}
+    return {"response": f"Entity {entity['PartitionKey']} {entity['RowKey']} updated."}
 
 
 def reset(table_client: TableClient, entity: dict, update_mode: UpdateMode = UpdateMode.MERGE) -> dict:
@@ -234,7 +234,7 @@ def reset(table_client: TableClient, entity: dict, update_mode: UpdateMode = Upd
 
     validate_result(table_client=table_client, entity=entity)
 
-    return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' reset."}
+    return {"response": f"Entity {entity['PartitionKey']} {entity['RowKey']} reset."}
 
 
 def insert(table_client: TableClient, entity: dict) -> dict:
@@ -261,7 +261,7 @@ def insert(table_client: TableClient, entity: dict) -> dict:
 
     validate_result(table_client=table_client, entity=entity)
 
-    return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' inserted."}
+    return {"response": f"Entity {entity['PartitionKey']} {entity['RowKey']} inserted."}
 
 
 def upsert(table_client: TableClient, entity: dict) -> dict:
@@ -284,4 +284,4 @@ def upsert(table_client: TableClient, entity: dict) -> dict:
 
     validate_result(table_client=table_client, entity=entity)
 
-    return {"response": f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' upserted."}
+    return {"response": f"Entity {entity['PartitionKey']} {entity['RowKey']} upserted."}
