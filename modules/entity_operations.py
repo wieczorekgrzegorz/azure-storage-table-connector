@@ -193,7 +193,7 @@ def update(table_client: TableClient, entity: dict, update_mode: UpdateMode = Up
     return {"response": f"Entity {entity['PartitionKey']} {entity['RowKey']} updated."}
 
 
-def reset(table_client: TableClient, entity: dict, update_mode: UpdateMode = UpdateMode.MERGE) -> dict:
+def reset(table_client: TableClient, entity: dict) -> dict:
     """Resets the specified entity in a table to default values.
     Required entity keys: PartitionKey, RowKey.
 
@@ -225,7 +225,7 @@ def reset(table_client: TableClient, entity: dict, update_mode: UpdateMode = Upd
     )
     entity["SessionReferenceNumber"] = ""
     try:
-        table_client.upsert_entity(mode=update_mode, entity=entity)
+        table_client.upsert_entity(entity=entity)
     except (
         azure_exceptions.ResourceNotFoundError,
         azure_exceptions.HttpResponseError,
