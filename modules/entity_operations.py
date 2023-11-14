@@ -131,7 +131,7 @@ def delete(table_client: TableClient, entity: dict) -> dict:
 
     raise custom_error.TableOperationsError(
         summary="AzureError",
-        message=f"Entity '{entity['PartitionKey']}/{entity['RowKey']}' NOT removed from table.",
+        message=f"Entity {entity['PartitionKey']} {entity['RowKey']} NOT removed from table.",
     )
 
 

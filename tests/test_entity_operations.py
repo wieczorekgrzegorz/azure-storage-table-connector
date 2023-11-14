@@ -153,7 +153,7 @@ class TestDelete(EntityOperationBaseTestCase):
         """Test for case when deleting operation is successfull - entity is found and deleted."""
 
         expected_result = {
-            "response": f"Entity '{self.entity['PartitionKey']}/{self.entity['RowKey']}' removed from table."
+            "response": f"Entity {self.entity['PartitionKey']} {self.entity['RowKey']} removed from table."
         }
 
         self.mock_table_client.delete_entity.return_value = None
@@ -168,9 +168,7 @@ class TestDelete(EntityOperationBaseTestCase):
         table_client.get_entity doesn't return ResourceNotFoundError."""
 
         expected_error_summary = self.error_azure_error
-        expected_error_message = (
-            f"Entity '{self.entity['PartitionKey']}/{self.entity['RowKey']}' NOT removed from table."
-        )
+        expected_error_message = f"Entity {self.entity['PartitionKey']} {self.entity['RowKey']} NOT removed from table."
 
         self.mock_table_client.delete_entity.return_value = None
         self.mock_table_client.get_entity.side_effect = None
@@ -254,7 +252,7 @@ class TestUpdate(EntityOperationBaseTestCase):
     def test_successful_update(self) -> None:
         """Test for case when update operation is successful."""
 
-        expected_result = {"response": f"Entity '{self.entity['PartitionKey']}/{self.entity['RowKey']}' updated."}
+        expected_result = {"response": f"Entity {self.entity['PartitionKey']} {self.entity['RowKey']} updated."}
 
         self.mock_table_client.update_entity.return_value = None
         self.mock_validate_result.return_value = None
@@ -309,9 +307,9 @@ class TestReset(EntityOperationBaseTestCase):
     def test_successful_reset(self) -> None:
         """Test for case when reset operation is successful."""
 
-        expected_result = {"response": f"Entity '{self.entity['PartitionKey']}/{self.entity['RowKey']}' reset."}
+        expected_result = {"response": f"Entity {self.entity['PartitionKey']} {self.entity['RowKey']} reset."}
 
-        self.mock_table_client.update_entity.return_value = None
+        self.mock_table_client.upsert_entity.return_value = None
         self.mock_validate_result.return_value = None
 
         test_result = entity_operations.reset(table_client=self.mock_table_client, entity=self.entity)
@@ -320,11 +318,11 @@ class TestReset(EntityOperationBaseTestCase):
         self.mock_validate_result.assert_called_once_with(table_client=self.mock_table_client, entity=self.entity)
 
     def test_unsuccessful_reset_resource_not_found(self) -> None:
-        """Test for case when ResourceNotFoundError is raised by update_entity method."""
+        """Test for case when ResourceNotFoundError is raised by reset method."""
 
         expected_error_summary = self.error_azure_error
 
-        self.mock_table_client.update_entity.side_effect = azure_exceptions.ResourceNotFoundError()
+        self.mock_table_client.upsert_entity.side_effect = azure_exceptions.ResourceNotFoundError()
 
         with self.assertRaises(expected_exception=self.expected_exception) as cm:
             entity_operations.reset(table_client=self.mock_table_client, entity=self.entity)
@@ -333,11 +331,11 @@ class TestReset(EntityOperationBaseTestCase):
         self.mock_validate_result.assert_not_called()
 
     def test_unsuccessful_reset_http_response_error(self) -> None:
-        """Test for case when HttpResponseError is raised by update_entity method."""
+        """Test for case when HttpResponseError is raised by reset method."""
 
         expected_error_summary = self.error_azure_error
 
-        self.mock_table_client.update_entity.side_effect = azure_exceptions.HttpResponseError()
+        self.mock_table_client.upsert_entity.side_effect = azure_exceptions.HttpResponseError()
 
         with self.assertRaises(expected_exception=self.expected_exception) as cm:
             entity_operations.reset(table_client=self.mock_table_client, entity=self.entity)
@@ -364,7 +362,7 @@ class TestInsert(EntityOperationBaseTestCase):
     def test_successful_insert(self) -> None:
         """Test for case when insert operation is successful."""
 
-        expected_result = {"response": f"Entity '{self.entity['PartitionKey']}/{self.entity['RowKey']}' inserted."}
+        expected_result = {"response": f"Entity {self.entity['PartitionKey']} {self.entity['RowKey']} inserted."}
 
         self.mock_table_client.create_entity.return_value = None
         self.mock_validate_result.return_value = None
@@ -419,7 +417,7 @@ class TestUpsert(EntityOperationBaseTestCase):
     def test_successful_upsert(self):
         """Test for case when upsert operation is successful."""
 
-        expected_result = {"response": f"Entity '{self.entity['PartitionKey']}/{self.entity['RowKey']}' upserted."}
+        expected_result = {"response": f"Entity {self.entity['PartitionKey']} {self.entity['RowKey']} upserted."}
 
         self.mock_table_client.upsert_entity.return_value = None
         self.mock_validate_result.return_value = None
